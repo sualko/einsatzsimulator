@@ -1,0 +1,56 @@
+version: "3.0"
+
+nlu:
+- lookup: target
+  examples: |
+    - Halle
+    - Schuppen
+    - Schwimmbad
+    - Einrichtung
+    - Krankenhaus
+    - ELW
+    - Einsatzleitwagen
+    - MTW
+    - Manschaftstransportwagen
+    - Feuerwehr
+    - THW
+    - Polizei
+    - Wiese
+    - Bereitstellungsraum
+    - Patientenablage
+    - Behandlungsplatz
+    - Rathaus
+    - Turnhalle
+    - Standort 1
+    - Standort 2
+    - Standort 3
+
+- lookup: audience
+  examples: |
+    - Susi
+    - Renate
+    - Peter
+    - Karl
+    - Karl-Heinz
+    - Frieda
+    - Carla
+    - Klaus
+
+- intent: move
+  examples: |
+    - [Frieda](audience) lauf zur [Turnhalle](target)
+    - [Karl-Heinz](audience) laufe zum [Krankenhaus](target)
+    - (Ihr Zwei)[audience] sollt zum [Bereitstellungsraum](target)
+    - Gehe da rüber
+    - Begebe dich zum [Schwimmbad](target)
+    - (Ihr Drei)[audience] sollt zum [Standort 1](target)
+    - (Karl)[audience] geh bitte zu den anderen
+    - (Susi)[audience], (Renate)[audience] und (Peter)[audience] sollen zum [Standort 2](target)
+
+- intent: help
+  examples: |
+    - Hilfe
+    - Ich weiß nicht mehr weiter
+    - Wie kann ich Befehle erteilen
+    - Welche Aktionen kann ich ausführen
+    - Wie funktioniert das

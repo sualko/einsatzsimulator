@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Match {
+  id       String   @id @default(uuid())
+  scenario Scenario @relation(fields: [scenarioId], references: [id])
+
+  @@map("matches")
+  scenarioId Int
+}
+
+model Scenario {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  locations   Location[]
+  aids        Aid[]
+  victims     Victim[]
+  matches     Match[]
+  latitude    Float
+  longitude   Float
+
+  @@map("scenarios")
+}
+
+model Location {
+  id      Int      @id @default(autoincrement())
+  name    String
+  aids    Aid[]
+  victims Victim[]
+  latitude    Float
+  longitude   Float
+
+  scenarioId Int
+  scenario   Scenario @relation(fields: [scenarioId], references: [id])
+  @@map("locations")
+}
+
+enum Qualification {
+  SAN
+  RH
+  RS
+  NFS
+  NA
+}
+
+enum Leader {
+  None
+  Group
+  Platoon
+  Unit
+}
+
+model Aid {
+  id            Int           @id @default(autoincrement())
+  name          String
+  age           Int
+  qualification Qualification
+  leader        Leader
+  locationId    Int?
+  location      Location?     @relation(fields: [locationId], references: [id])
+  playedBy      String?
+
+  victim     Victim?   @relation(fields: [victimId], references: [id])
+  victimId   Int?
+  Scenario   Scenario? @relation(fields: [scenarioId], references: [id])
+  scenarioId Int?
+
+  @@map("aids")
+}
+
+enum Consciousness {
+  orientated
+  tarnished
+  unconscious
+}
+
+enum Pupils {
+  dilated
+  normal
+  small
+}
+
+enum Priority {
+  Unknown
+  T1
+  T2
+  T3
+  T4
+  Dead
+}
+
+model Victim {
+  id   Int    @id @default(autoincrement())
+  name String
+  age  Int
+
+  ableToWalk    Boolean
+  consciousness Consciousness
+  pupils        Pupils
+  pupilReaction Boolean
+  breathing     Int
+  priority      Priority @default(Unknown)
+  identifier    String?
+
+  injuries Injury[]
+  aids     Aid[]
+  events   Event[]
+
+  location   Location? @relation(fields: [locationId], references: [id])
+  locationId Int?
+  Scenario   Scenario? @relation(fields: [scenarioId], references: [id])
+  scenarioId Int?
+
+  @@map("victims")
+}
+
+enum BodyLocation {
+  head
+  leftArm
+  rightArm
+  trunk
+  leftLeg
+  rightLeg
+}
+
+model Injury {
+  id                Int          @id @default(autoincrement())
+  enabled           Boolean
+  bodyLocation      BodyLocation
+  severity          Int
+  pain              Int
+  description       String
+  treated           Boolean
+  requiredTime      Int
+  requiredAids      Int
+  requiredEquipment Int
+
+  requiredBy  Event[] @relation("_injury_dependency_event")
+  activatedBy Event[] @relation("_injury_consequence_event")
+
+  victimId Int
+  victim   Victim @relation(fields: [victimId], references: [id])
+
+  @@map("injuries")
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  dependencies Injury[] @relation("_injury_dependency_event")
+  consequences Injury[] @relation("_injury_consequence_event")
+  time         Int
+
+  ableToWalk    Boolean?
+  consciousness Consciousness?
+  pupils        Pupils?
+  pupilReaction Boolean?
+  breathing     Int?
+
+  victim   Victim @relation(fields: [victimId], references: [id])
+  victimId Int
+
+  @@map("events")
+}
