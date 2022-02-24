@@ -5,7 +5,16 @@
     "outDir": "dist",
     "target": "es2017",
     "isolatedModules": false,
-    "noEmit": false
+    "noEmit": false,
+    "sourceMap": false,
+    "paths": {
+      "lib/*": ["lib/*"]
+    },
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths"
+      },
+    ]
   },
   "include": [
     "server/**/*.ts",
