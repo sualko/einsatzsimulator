@@ -20,6 +20,7 @@ const generateAid = (id: number, name: string, locationId = 0) => {
         scenarioId: 0,
         locationId,
         victimId: null,
+        playedBy: null,
     }, boardGame);
 }
 
@@ -35,6 +36,8 @@ const generateVictim = (id: number, name: string, properties = {}) => {
         breathing: 12,
         locationId: 0,
         scenarioId: 0,
+        priority: "Unknown",
+        identifier: null,
         injuries: [{
             id: 1,
             enabled: true,

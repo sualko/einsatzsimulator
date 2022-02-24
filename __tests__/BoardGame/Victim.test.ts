@@ -1,5 +1,6 @@
 import { BodyLocation, Consciousness, Pupils } from "@prisma/client";
 import BoardGame from "server/BoardGame";
+import Location from "server/BoardGame/Location";
 import Victim from "server/BoardGame/Victim";
 
 jest.mock('server/BoardGame');
@@ -18,6 +19,8 @@ const generateVictim = (id: number, name: string, properties = {}) => {
         breathing: 12,
         locationId: 0,
         scenarioId: 0,
+        priority: "Unknown",
+        identifier: null,
         injuries: [{
             id: 1,
             enabled: true,
@@ -74,34 +77,36 @@ const generateVictim = (id: number, name: string, properties = {}) => {
 }
 
 describe('Victim', () => {
+    afterEach(() => {
+        jest.useRealTimers();
+    });
+
     it('should update properties with event for untreated dependency', () => {
+        jest.useFakeTimers();
+
         const victim = generateVictim(1, 'Carl');
+        victim.start();
 
         expect(victim.isAbleToWalk()).toEqual(true);
 
-        return new Promise<void>(resolve => {
-            setTimeout(() => {
-                expect(victim.isAbleToWalk()).toEqual(false);
-                expect(victim.getBreathingFrequenz()).toEqual(12);
+        jest.runAllTimers();
 
-                resolve();
-            }, 1000);
-        });
+        expect(victim.isAbleToWalk()).toEqual(false);
+        expect(victim.getBreathingFrequenz()).toEqual(12);
     });
 
     it('should not update properties with event for treated dependency', () => {
+        jest.useFakeTimers();
+
         const victim = generateVictim(1, 'Carl');
+        victim.start();
 
         victim.getInjuryById(1).flagTreated();
 
-        return new Promise<void>(resolve => {
-            setTimeout(() => {
-                expect(victim.isAbleToWalk()).toEqual(true);
-                expect(victim.getBreathingFrequenz()).toEqual(12);
+        jest.runAllTimers();
 
-                resolve();
-            }, 1000);
-        });
+        expect(victim.isAbleToWalk()).toEqual(true);
+        expect(victim.getBreathingFrequenz()).toEqual(12);
     });
 
     it('should return next injury to be treated', () => {
@@ -157,7 +162,7 @@ describe('Victim', () => {
         const victim = generateVictim(1, 'Carl', { ableToWalk: false });
 
         expect(() => {
-            victim.goTo(1);
+            victim.goTo(new Location({ id: 1, latitude: 0, longitude: 0, name: '', scenarioId: 0 }));
         }).toThrow();
     });
 });

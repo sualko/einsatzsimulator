@@ -9,6 +9,9 @@ import AbstractPerson from "server/BoardGame/Person";
 jest.mock('server/BoardGame');
 
 class Person extends AbstractPerson {
+    public getData() {
+        throw new Error("Method not implemented.");
+    }
     protected getType(): any {
         return undefined;
     }
@@ -24,7 +27,11 @@ const generatePerson = (id: number, name: string, locationId = 0) => {
     }, boardGame);
 }
 
-describe('Victim', () => {
+describe('Person', () => {
+    afterEach(() => {
+        jest.useRealTimers();
+    });
+
     it('should execute commands in order', async () => {
         expect.assertions(7);
 
@@ -75,19 +82,27 @@ describe('Victim', () => {
     it('should not move to current location', async () => {
         const person = generatePerson(1, 'Tiger');
 
-        const move = new Move(new Location({ id: 0, name: '', scenarioId: 0 }));
+        const move = new Move(new Location({ id: 0, name: '', scenarioId: 0, latitude: 0, longitude: 0 }));
 
         expect(await person.communicate(move)).toEqual(true);
         expect(person.getLocationId()).toEqual(0);
     }, 1000);
 
     it('should move to new location', async () => {
+        jest.useFakeTimers();
+
         const person = generatePerson(1, 'Tiger');
 
-        const move = new Move(new Location({ id: 1, name: '', scenarioId: 0 }));
+        const move = new Move(new Location({ id: 1, name: '', scenarioId: 0, latitude: 0, longitude: 0 }));
 
-        expect(await person.communicate(move)).toEqual(true);
+        const promise = person.communicate(move);
 
-        expect(person.getLocationId()).toEqual(1);
-    }, 6000);
+        jest.runAllTimers();
+
+        return promise.then(success => {
+            expect(success).toEqual(true);
+
+            expect(person.getLocationId()).toEqual(1);
+        });
+    });
 });
