@@ -3,6 +3,7 @@ on: [pull_request, push]
 
 env:
   NEXT_TELEMETRY_DISABLED: 1
+  DATABASE_URL: "mysql://localhost"
 
 jobs:
   build:
