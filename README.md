@@ -1,5 +1,7 @@
 ![Logo Einsatzsimulator](docs/einsatzsimulator-logo.svg)
 
+[![Check code base](https://github.com/sualko/einsatzsimulator/actions/workflows/yarn.yml/badge.svg)](https://github.com/sualko/einsatzsimulator/actions/workflows/yarn.yml)
+
 The Einsatzsimulator provides a possibility for executives of the civil
 protection to train their communication and organization skills. Currently the
 project is not ready for production, but it provides a useable prototype.
