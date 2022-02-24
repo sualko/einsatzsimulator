@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import { Leader, Qualification } from "@prisma/client";
 import React from 'react';
 import LeaderBadge from "./LeaderBadge";
